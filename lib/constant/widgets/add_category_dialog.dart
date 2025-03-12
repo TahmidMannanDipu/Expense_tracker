@@ -1,48 +1,55 @@
-import 'package:expense_tracker/models/expense_category.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../models/expense_category.dart';
+import '../../providers/expense_provider.dart';
+
 
 class AddCategoryDialog extends StatefulWidget {
   final Function(ExpenseCategory) onAdd;
-  const AddCategoryDialog({super.key, required this.onAdd});
+
+  AddCategoryDialog({required this.onAdd});
 
   @override
-  State<AddCategoryDialog> createState() => _AddCategoryDialogState();
+  _AddCategoryDialogState createState() => _AddCategoryDialogState();
 }
 
-final TextEditingController _nameController = TextEditingController();
-
 class _AddCategoryDialogState extends State<AddCategoryDialog> {
+  final TextEditingController _controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Add category'),
+      title: Text('Add New Category'),
       content: TextField(
-        controller: _nameController,
-        decoration: InputDecoration(labelText: 'Category Name'),
+        controller: _controller,
+        decoration: InputDecoration(
+          labelText: 'Category Name',
+        ),
       ),
-      actions: <Widget>[
+      actions: [
         TextButton(
+          child: Text('Cancel'),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        TextButton(
+          child: Text('Add'),
           onPressed: () {
+            var newCategory = ExpenseCategory(
+                id: DateTime.now().toString(), name: _controller.text, isDefault: true);
+            widget.onAdd(newCategory);
+            Provider.of<ExpenseProvider>(context, listen: false)
+                .addCategory(newCategory);
+            _controller.clear(); // Clear the input field
             Navigator.of(context).pop();
           },
-          child: Text('Cancel'),
         ),
-        ElevatedButton(
-          onPressed: () {
-            final categoryName = _nameController.text;
-            if (categoryName.isNotEmpty) {
-              Navigator.of(context).pop(categoryName);
-            }
-          },
-          child: Text('Add'),
-        )
       ],
     );
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 }

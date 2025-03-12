@@ -1,5 +1,4 @@
 import 'package:expense_tracker/providers/expense_provider.dart';
-import 'package:expense_tracker/screens/add_expense_screen.dart';
 import 'package:expense_tracker/screens/category_management_screen.dart';
 import 'package:expense_tracker/screens/home_screen.dart';
 import 'package:expense_tracker/screens/tag_management_screen.dart';

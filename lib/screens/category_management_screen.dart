@@ -23,12 +23,13 @@ class CategoryManagementScreen extends StatelessWidget {
                   onPressed: () {
                     provider.deleteCategory(category.id);
                   },
-                  icon: Icon(Icons.delete),
+                  icon: Icon(Icons.delete,color: Colors.red,),
                 ),
               );
             });
       }),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue[200],
         onPressed: () {
           showDialog(
             context: context,

@@ -1,3 +1,4 @@
+import 'package:expense_tracker/constant/app_color.dart';
 import 'package:expense_tracker/constant/widgets/add_category_dialog.dart';
 import 'package:expense_tracker/constant/widgets/add_tag_dialog.dart';
 import 'package:expense_tracker/providers/expense_provider.dart';
@@ -49,6 +50,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
+          spacing: 16,
           children: [
             buildTextField(
               _amountController,
@@ -58,7 +60,26 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             buildTextField(_payeeController, 'Payee', TextInputType.text),
             buildTextField(_noteController, 'Note', TextInputType.text),
             buildDateField(_selectedDate),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: buildCategoryDropdown(expenseProvider),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: buildTagDropdown(expenseProvider),
+            ),
           ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.all(8),
+        child: ElevatedButton(
+          onPressed: _saveExpense,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColor.primaryColor,
+            foregroundColor: Colors.white,
+          ),
+          child: Text("Save Expense"),
         ),
       ),
     );
@@ -140,7 +161,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   }
 
 //* BUILD TAG DROPDOWN ITEM
- Widget buildTagDropdown(ExpenseProvider provider) {
+  Widget buildTagDropdown(ExpenseProvider provider) {
     return DropdownButtonFormField(
         value: _selectedTagId,
         items: provider.tags.map((tag) {
@@ -172,5 +193,29 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             });
           }
         });
+  }
+
+  void _saveExpense() {
+    if (_amountController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please fill in all required fields!'),
+        ),
+      );
+      return;
+    }
+
+    final expense = Expense(
+      id: widget.initialExpense?.id ?? DateTime.now().toString(),
+      amount: double.parse(_amountController.text),
+      categoryId: _selectedCategoryId!,
+      payee: _payeeController.text,
+      note: _noteController.text,
+      date: _selectedDate,
+      tag: _selectedTagId!,
+    );
+    Provider.of<ExpenseProvider>(context, listen: false)
+        .addOrUpdateExpense(expense);
+    Navigator.pop(context);
   }
 }

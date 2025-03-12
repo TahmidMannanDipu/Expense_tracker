@@ -12,27 +12,40 @@ class TagManagementScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Manage Tag'),
       ),
-      body: Consumer<ExpenseProvider>(builder: (context, provider, child){
+      body: Consumer<ExpenseProvider>(builder: (context, provider, child) {
         return ListView.builder(
             itemCount: provider.tags.length,
-            itemBuilder: (context,index){
+            itemBuilder: (context, index) {
               final tag = provider.tags[index];
-          return ListTile(
-            title: Text(tag.name),
-            trailing: IconButton(onPressed: (){
-              provider.deleteTag(tag.id);
-            },
-                icon: Icon(Icons.delete),),
-          );
-        });
+              return ListTile(
+                title: Text(tag.name),
+                trailing: IconButton(
+                  onPressed: () {
+                    provider.deleteTag(tag.id);
+                  },
+                  icon: Icon(
+                    Icons.delete,
+                    color: Colors.red,
+                  ),
+                ),
+              );
+            });
       }),
-      floatingActionButton: FloatingActionButton(onPressed: (){
-        showDialog(context: context, builder: (context)=> AddTagDialog(onAdd:(newTag){
-          Provider.of<ExpenseProvider>(context,listen: false).addTag(newTag);
-        } ),);
-      },
-      tooltip: 'Add New Tag',
-        child: Icon(Icons.add),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue[200],
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => AddTagDialog(onAdd: (newTag) {
+              Provider.of<ExpenseProvider>(context, listen: false)
+                  .addTag(newTag);
+            }),
+          );
+        },
+        tooltip: 'Add New Tag',
+        child: Icon(
+          Icons.add,
+        ),
       ),
     );
   }
